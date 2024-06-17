@@ -1,3 +1,4 @@
+import sys
 import pygame
 import random
 
@@ -21,6 +22,8 @@ pygame.display.set_caption("扫雷游戏")
 bomb_grid = [[0 for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
 display_grid = [[" " for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
 revealed_grid = [[False for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
+flag_grid = [[False for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
+
 
 # 初始化地雷位置
 bomb_positions = random.sample([(i, j) for i in range(GRID_SIZE) for j in range(GRID_SIZE)], BOMB_COUNT)
@@ -57,10 +60,13 @@ def draw_text():
             if revealed_grid[i][j]:
                 text = font.render(display_grid[i][j], True, BLACK)
                 screen.blit(text, (j * block_size + 10, i * block_size + 10))
+            elif flag_grid[i][j]:
+                text = font.render("F",True,RED)
+                screen.blit(text, (j * block_size + 10, i * block_size + 10))
 
 # 扫雷逻辑
 def reveal_cell(row, col):
-    if revealed_grid[row][col]:
+    if revealed_grid[row][col] or flag_grid[row][col]:
         return
     revealed_grid[row][col] = True
     if bomb_grid[row][col] == 1:
@@ -71,6 +77,10 @@ def reveal_cell(row, col):
             for j in range(-1, 2):
                 if 0 <= row + i < GRID_SIZE and 0 <= col + j < GRID_SIZE:
                     reveal_cell(row + i, col + j)
+def flag_cell(row,col):
+    if not revealed_grid[row][col]:
+        flag_grid[row][col] = not flag_grid[row][col]
+        
 def check_win():
     for i in range(GRID_SIZE):
         for j in range(GRID_SIZE):
@@ -98,6 +108,9 @@ while run:
                 reveal_cell(row, col)
                 if check_win():
                     print("You win!")
+                    run = False
+            elif event.button == 3: #右键点击
+                flag_cell(row,col)
 
     pygame.display.flip()
 
