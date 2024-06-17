@@ -60,14 +60,26 @@ def draw_text():
 
 # 扫雷逻辑
 def reveal_cell(row, col):
-    pass
-
+    if revealed_grid[row][col]:
+        return
+    revealed_grid[row][col] = True
+    if bomb_grid[row][col] == 1:
+        print("you lose")
+        game_over()
+    elif display_grid[row][col] == "0":
+        for i in range(-1, 2):
+            for j in range(-1, 2):
+                if 0 <= row + i < GRID_SIZE and 0 <= col + j < GRID_SIZE:
+                    reveal_cell(row + i, col + j)
 def check_win():
-    pass
-
+    for i in range(GRID_SIZE):
+        for j in range(GRID_SIZE):
+            if bomb_grid[i][j] == 0 and not revealed_grid[i][j]:
+                return False
+    return True
 def game_over():
-    pass
-
+    pygame.quit()
+    sys.exit()
 # 主游戏循环
 run = True
 while run:
