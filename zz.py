@@ -1,7 +1,6 @@
 import sys
 import pygame
 import random
-import pygame
 from tkinter import Tk,messagebox
 
 # 初始化 Pygame
